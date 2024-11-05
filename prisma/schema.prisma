@@ -1,0 +1,78 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Users {
+  id        String   @id @default(uuid())
+  fullName  String
+  username  String   @unique
+  email     String   @unique
+  password  String
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+model Balita {
+  id          String        @id @default(uuid())
+  name        String
+  gender      Gender
+  birth       DateTime
+  birthWeight Float
+  birthHeight Float
+  Measurement Measurement[] @relation(fields: [], references: [])
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model Measurement {
+  id            String     @id @default(uuid())
+  balitaId      String?
+  balita        Balita?    @relation(fields: [balitaId], references: [id])
+  date          DateTime
+  currentWeight Float
+  currentHeight Float
+  currentAge    Int
+  outputFuzzy   OutputType
+  fuzzyScore    Float
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+}
+
+model FuzzyRule {
+  id        String     @id @default(uuid())
+  ageRange  String
+  weightMin Float
+  weightMax Float
+  heightMin Float
+  heightMax Float
+  output    OutputType
+}
+
+enum OutputType {
+  STUNTING
+  NORMAL
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+enum Gender {
+  LAKI_LAKI
+  PEREMPUAN
+}
