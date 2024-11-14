@@ -3,7 +3,7 @@ import { AppModule } from './app.module';
 import { Server } from 'http';
 import * as express from 'express';
 import { ExpressAdapter } from '@nestjs/platform-express';
-import { Callback, Context, Handler } from 'aws-lambda';
+import { Handler } from 'aws-lambda';
 
 let server: Server;
 async function bootstrap() {
@@ -21,11 +21,7 @@ async function bootstrap() {
   });
 }
 
-export const handler: Handler = async (
-  event: any,
-  context: Context,
-  callback: Callback,
-) => {
+export const handler: Handler = async () => {
   server = server ?? (await bootstrapServer());
   return server;
 };
